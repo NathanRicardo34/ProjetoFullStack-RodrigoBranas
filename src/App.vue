@@ -1,7 +1,41 @@
 <script setup lang="ts">
-const prefixes = ['Air', 'Jet', 'Flight']
-const sufixes = ['Hub', 'Station', 'Mart']
-const domains = ['AirHub', 'AirStation', 'AirMart', 'JetHub', 'JetStation', 'JetMart', 'FlightHub', 'FlightStation', 'FlightMart']
+import { ref } from 'vue'
+
+const prefixText = ref<string>('')
+const sufixText = ref<string>('')
+
+const addPrefix = (data:string) => {
+  prefixes.value.push(data)
+  prefixText.value = ''
+  generate()
+}
+const deletePrefix = (data:string) => {
+  prefixes.value.splice(prefixes.value.indexOf(data), 1)
+  generate()
+}
+
+const addSufix = (data:string) => {
+  sufixes.value.push(data)
+  sufixText.value = ''
+  generate()
+}
+const deleteSufix = (data:string) => {
+  sufixes.value.splice(sufixes.value.indexOf(data), 1)
+  generate()
+}
+
+const generate = () => {
+  domains.value = []
+  for( let i of prefixes.value) {
+    for( let j of sufixes.value) {
+      domains.value.push(i + j)
+    }
+  }
+}
+
+const prefixes = ref(['Air', 'Jet', 'Flight'])
+const sufixes = ref(['Hub', 'Station', 'Mart'])
+const domains = ref(['AirHub', 'AirStation', 'AirMart', 'JetHub', 'JetStation', 'JetMart', 'FlightHub', 'FlightStation', 'FlightMart'])
 </script>
 <template>
   <div>
@@ -19,13 +53,18 @@ const domains = ['AirHub', 'AirStation', 'AirMart', 'JetHub', 'JetStation', 'Jet
             <div class="card-body">
               <ul >
                 <li v-for="(prefix, key) in prefixes" :key="key">
-                  {{prefix}}
+                  <div class="grid grid-cols-3">
+                    {{prefix}}
+                    <div class="text-right">
+                      <button class="ml-1" v-on:click="deletePrefix(prefix)"><ify icon="clarity:trash-solid"/></button>
+                    </div>
+                  </div>
                 </li>
               </ul>
               <br/>
               <div class="row">
-                <input type="text" placeholder="Digite o prefixo"/>
-                <button class="ml-1"><ify icon="ic:baseline-plus"/></button>
+                <input v-model="prefixText" type="text" v-on:keyup.enter="addPrefix(prefixText)" placeholder="Digite o prefixo"/>
+                <button class="ml-1" v-on:click="addPrefix(prefixText)"><ify icon="ic:baseline-plus"/></button>
               </div>
             </div>
           </div>
@@ -34,13 +73,20 @@ const domains = ['AirHub', 'AirStation', 'AirMart', 'JetHub', 'JetStation', 'Jet
             <div class="card-body">
               <ul >
                 <li v-for="(sufix, key) in sufixes" :key="key">
-                  {{sufix}}
+                  <div class="row">
+                    <div class="gap-12 columns-2">
+                      {{sufix}}
+                      <div class="text-right">
+                        <button class="ml-1" v-on:click="deleteSufix(sufix)"><ify icon="clarity:trash-solid"/></button>
+                      </div>
+                    </div>
+                  </div>
                 </li>
               </ul>
               <br/>
               <div class="row">
-                <input type="text" placeholder="Digite o prefixo">
-                <button class="ml-1"><ify icon="ic:baseline-plus"/></button>
+                <input v-model="sufixText" type="text" v-on:keyup.enter="addSufix(sufixText)" placeholder="Digite o sufixo">
+                <button class="ml-1" v-on:click="addSufix(sufixText)"><ify icon="ic:baseline-plus"/></button>
               </div>
             </div>
           </div>
